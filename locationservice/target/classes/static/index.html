@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Locationservice</title>
+</head>
+<body>
+<h1>Ortsuche</h1>
+<p></p>
+
+Suche nach Ort: <input type="text" id="ortEingabe"> <button onClick="fragServer()">Suche</button>
+<div id="ergebnis">
+</div>
+
+<script>
+    function fragServer() {
+        var ort = document.getElementById("ortEingabe").value;
+        var reqUrl = "/location?name=" + ort; // Hinweis: Die Anfragen werden relativ zum aktuellen Host gesendet.
+
+        fetch(reqUrl)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                var ergebnisDiv = document.getElementById("ergebnis");
+                if (data.latitude === 0 && data.longitude === 0) {
+                    ergebnisDiv.innerHTML = "Ort nicht gefunden.";
+                } else {
+                    ergebnisDiv.innerHTML = "Längengrad: " + data.longitude + "<br> Breitengrad: " + data.latitude;
+                    var googleMapsLink = "https://www.google.com/maps/search/?api=1&query=" + data.latitude + "," + data.longitude;
+                    ergebnisDiv.innerHTML += "<br><a href='" + googleMapsLink + "' target='_blank'>Auf Google Maps anzeigen</a>";
+                }
+            })
+            .catch(function(error) {
+                console.log('Fehler beim Abrufen der Daten:', error);
+            });
+    }
+</script>
+</body>
+</html>
